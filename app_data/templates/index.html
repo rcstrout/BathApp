@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Python Web Interface</title>
+</head>
+<body>
+    <h1>Python Web Interface</h1>
+    <form method="post">
+        <label for="routine">Choose a routine:</label>
+        <select name="routine" id="routine">
+            <option value="0">Set to constant temperature</option>
+            <option value="1">Set to starting temperature and start ramp</option>
+            <option value="2">Start ramp immediately from current temperature</option>
+        </select>
+        <br><br>
+        <label for="set_temp">Setpoint Temperature (F):</label>
+        <input type="text" name="set_temp" required><br><br>
+        <button type="submit">Run Script</button>
+    </form>
+    {% if output %}
+    <h2>Script Output:</h2>
+    <pre>{{ output }}</pre>
+    {% endif %}
+</body>
+</html>

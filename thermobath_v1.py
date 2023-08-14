@@ -32,32 +32,32 @@ import sys # for user input
 # for example on Dowd Mytilus laptop it returns ['/dev/ttyS9']
 try: 
     bath = serial.Serial(
-                        '/dev/ttyS9',  #COM4
+                        'COM3',  #COM4
 						baudrate = 19200,
 						bytesize=8,
 						#parity="NONE",
-                        #stopbits=1,
+                        stopbits = 1 ,
 						timeout = 1)
 
-    print "***********************************"
-    print "Serial connection established on "
-    print bath.name # print port info
-    print "***********************************"
+    print("***********************************")
+    print("Serial connection established on")
+    print(bath.name) # print port info
+    print( "***********************************")
     time.sleep(2)
-	#bath.write("SE1\r") # turn on command echo
-    #response = bath.readline() # always read the response to clear the buffer
-    #print "SE0 response: %s" % response
-    bath.write("RT \r")
+    bath.write(b"SE1\r") # turn on command echo
+    response = bath.readline() # always read the response to clear the buffer
+    print ("SE0 response: %s" % response.decode())
+    bath.write(b"RT\r")
     response = bath.readline()  #float
-    print "Current bath temperature: %s" % response  #reads response as string
-    bath.write("RS\r")
+    print ("Current bath temperature: %s" % response.decode())  #reads response as string
+    bath.write(b"RS\r")
     response = bath.readline()
-    print "Current bath setpoint: %s" % response
+    print ("Current bath setpoint: %s" % response.decode())
     continue_flag = True
 except:
-    print "++++++++++++++++++++++++++"
-    print "Serial connection failed"
-    print "++++++++++++++++++++++++++"
+    print("++++++++++++++++++++++++++")
+    print("Serial connection failed")
+    print("++++++++++++++++++++++++++")
     time.sleep(5)
     continue_flag = False
 	
@@ -69,62 +69,63 @@ except:
 # manually set the water bath starting temperature already). 
 if continue_flag:
         
-    print "######################################################"
-    print "Choose a routine to run (enter 0, 1, or 2): " 
-    print "0. Set to constant temperature"
-    print "1. Set to starting temperature, pause, then start ramp"
-    print "2. Start ramp immediately from current temperature"
-    prog = raw_input("Enter 0, 1, or 2: ")
+    print ("######################################################")
+    print ("Choose a routine to run (enter 0, 1, or 2): ") 
+    print ("0. Set to constant temperature")
+    print ("1. Set to starting temperature, pause, then start ramp")
+    print ("2. Start ramp immediately from current temperature")
+    prog = input("Enter 0, 1, or 2: " )
 
 if prog == "0":
-    set_temp = raw_input("Enter the constant setpoint temperature (C): ")
-    set_temp = float(set_temp)
-    set_temp_str = str(set_temp) #convert to str to send command to change sp 
+    set_temp = input("Enter the constant setpoint temperature (C): ")
+    set_temp_celsius = ((set_temp - 32) * 5 / 9 )
+    set_temp_celsius = float(set_temp_celsius)
+    set_temp_str = str(set_temp_celsius) #convert to str to send command to change sp 
 elif prog == "1":
         # Get the various temperature parameters from the user
-        init_temp = raw_input("Enter the starting temperature (C): ")
+        init_temp = input("Enter the starting temperature (C): ")
         init_temp = float(init_temp) # Convert to float
 
-        target_temp = raw_input("Enter the target/peak temperature (C): ")
+        target_temp = input("Enter the target/peak temperature (C): ")
         target_temp = float(target_temp) # convert to float
         
-        rise_rate = raw_input("Enter temperature ramp rate (C per hour): ")
+        rise_rate = input("Enter temperature ramp rate (C per hour): ")
         rise_rate = float(rise_rate)
 
-        hold_time = raw_input("Enter time to hold at target temperature (min): ")
+        hold_time = input("Enter time to hold at target temperature (min): ")
         hold_time = float(hold_time)
 
-        fall_rate = raw_input("Enter temperature fall rate (C per hour): ")
+        fall_rate = input("Enter temperature fall rate (C per hour): ")
         fall_rate = float(fall_rate)
 
-        end_temp = raw_input("Enter the ending temperature (C): ")
+        end_temp = input("Enter the ending temperature (C): ")
         end_temp = float(end_temp)
 elif prog == "2":
-        target_temp = raw_input("Enter the target/peak temperature (C): ")
+        target_temp = input("Enter the target/peak temperature (C): ")
         target_temp = float(target_temp) # convert to float
         
-        rise_rate = raw_input("Enter temperature ramp rate (C per hour): ")
+        rise_rate = input("Enter temperature ramp rate (C per hour): ")
         rise_rate = float(rise_rate)
 
 
 if prog == "0":
         flag = False # set the while-loop flag
-        bath.write("SO 1\r")# set status of bath to on/run
+        bath.write(b"SO 1\r")# set status of bath to on/run
         response=bath.readline()
         while flag != True:
-            print "Setting constant temperature: %2.2f C" % set_temp
+            print ("Setting constant temperature: %2.2f C" % set_temp)
             # Assemble the command to send to the water bath
-            command = "SS " + "%2.2f\r" % set_temp
+            command = ("SS " + "%2.2f\r" % set_temp).encode('utf-8')
             bath.write(command)
             response = bath.readline()
             #read the response to clear buffer
             time.sleep(10)
             # Now check that the set point worked
-            bath.write("RS\r")
+            bath.write(b"RS\r")
             response = bath.readline()
             new_point = float(response[0:5])
             if response == set_temp:
-                print "Setpoint set: %2.2f C" % response
+                print ("Setpoint set: %2.2f C" % response)
                 flag = True  # set True to kill while loop
 	
     ################################################################################
@@ -134,25 +135,26 @@ if prog == "1":
         # The first step will be to set the initial temperature on the water  
         # bath and wait around until it reaches that temperature.
         flag = False # set the while-loop flag
-        bath.write("SO 1\r")# set status of bath to on/run
+        bath.write(b"SO 1\r")# set status of bath to on/run
         response=bath.readline()
         while flag != True:
-            print "Setting initial temperature: %2.2f C" % init_temp
+            print ("Setting initial temperature: %2.2f C" % init_temp)
             # Assemble the command to send to the water bath
-            command = "SS " + "%2.2f\r" % init_temp 
+            init_temp_celsius=(init_temp - 32) * 5 / 9
+            command = ("SS " + "%2.2f\r" % init_temp ).encode("utf-8")
             bath.write(command)
             response = bath.readline() # always read the response to clear 
                                        # the buffer
             time.sleep(0.01)
             # Now check that the set point worked
-            bath.write("RS\r")
+            bath.write(b"RS\r")
             response = bath.readline()
             #print response #24.00C
             response = float(response[0:5])
-            print "Init-temp = %2.2f C" % init_temp
-            print "Response = %2.2f C" % response
+            print ("Init-temp = %2.2f C" % init_temp)
+            print ("Response = %2.2f C" % response)
             if response == init_temp:
-                print "Setpoint set: %2.2f C" % response
+                print ("Setpoint set: %2.2f C" % response)
                 flag = True  # set True to kill while loop
             
         # Next we need to wait around for the water bath to get to the initial 
@@ -160,23 +162,23 @@ if prog == "1":
         flag = False # reset test flag
         while flag != True:
             time.sleep(5)
-            bath.write("RT\r")  # request current bath internal temperature
+            bath.write(b"RT\r")  # request current bath internal temperature
             response = bath.readline()
             response = float(response[0:5])
-            print "Current bath temp: %2.2f C" % response
+            print ("Current bath temp: %2.2f C" % response)
             # When the bath temperature gets within 0.05 of the target, we're 
             # close enough
             if (abs(init_temp - response) < 0.1):
                 flag = True  # set True to kill while loop
         # The script will now hold at the initial temperature until the user 
         # tells it to begin ramping the temperature to the target_temp.
-        print "****************************************************"
-        print "****************************************************"
-        print "Initial temperature reached"
-        print ""
-        junk = raw_input("Press Enter/Return to start temperature ramp")
-        print "Starting temperature ramp"
-        print "****************************************************"
+        print ("****************************************************")
+        print ("****************************************************")
+        print ("Initial temperature reached")
+        print ("")
+        junk = input("Press Enter/Return to start temperature ramp")
+        print ("Starting temperature ramp")
+        print ("****************************************************")
         prog = "2" #hitting Enter moves us to prog 2 with parameters defined above
 
 
@@ -185,9 +187,9 @@ if prog == "1":
     # above. Query the water bath to find its current setpoint and use that 
     # value as the init_temp
 if prog == "2":
-    bath.write("SO 1\r")# set status of bath to on/run
+    bath.write(b"SO 1\r")# set status of bath to on/run
     response=bath.readline()
-    bath.write("RS\r") # Query setpoint
+    bath.write(b"RS\r") # Query setpoint
     response = bath.readline()
     response = float(response[0:5]) # Read setpoint from bath
     init_temp = response # Set init_temp 
@@ -202,7 +204,7 @@ if prog == "2":
     # Calculate the time needed for the ramp (degrees / degrees per hour)
     ramp_duration = temp_diff / rise_rate # units hours
     ramp_duration_m = ramp_duration * 60 # convert to minutes
-    print "Ramp will take %2.2f hrs (%1.0f minutes)" % \
+    print ("Ramp will take %2.2f hrs (%1.0f minutes)" )% \
         (ramp_duration,ramp_duration_m)
 
     # Calculate per-minute temperature step (units of degrees C)
@@ -220,11 +222,11 @@ if prog == "2":
         decrease_flag = False # The ramp will be an increasing ramp
             
     prev_time = time.time() # get starting time (in seconds)
-    bath.write("RS\r") # get current setpoint
+    bath.write(b"RS\r") # get current setpoint
     current_set = bath.readline() # always read response to clear buffer
     current_set = float(current_set[0:5])
     current_set = current_set + rise_rate_m # add temp step to current setpoint
-    command = "SS " + "%2.2f\r" % current_set 
+    command = ("SS " + "%2.2f\r" % current_set).encode('utf-8') 
     bath.write(command) # change set point
     response = bath.readline()
     
@@ -238,7 +240,7 @@ if prog == "2":
             prev_time = new_time # update to new time
             current_set = current_set + rise_rate_m # add temp step to setpoint
             if current_set < target_temp and not decrease_flag:
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command) # update water bath setpoint
                 response = bath.readline()
                 # Calculate remaining temperature to cover
@@ -254,7 +256,7 @@ if prog == "2":
                     # convert final_time to a human-readable string                
                     final_str = time.strftime("%H:%M", 
                                               time.localtime(final_time))
-                    print "Current setpoint: %2.2f C, finishing at approx. %s" % \
+                    print ("Current setpoint: %2.2f C, finishing at approx. %s") % \
                         (current_set,final_str)
             elif current_set >= target_temp and not decrease_flag:
                 # If the new current_set value is greater than the target_temp, 
@@ -263,15 +265,15 @@ if prog == "2":
                 # this while loop
                 current_set = target_temp # set current_set to the final 
                                           # target_temp
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command)
                 response = bath.readline() # read line to clear buffer
                 flag = True # set flag True to kill while loop
-                print "Waiting to reach final temperature"
+                print ("Waiting to reach final temperature")
             elif current_set > target_temp and decrease_flag:
                 # The temperature should be ramped downward when decrease_flag
                 # is True
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command) # update water bath setpoint
                 response = bath.readline()
                 # Calculate remaining temperature to cover
@@ -287,7 +289,7 @@ if prog == "2":
                     # convert final_time to a human-readable string                
                     final_str = time.strftime("%H:%M", 
                                               time.localtime(final_time))
-                    print "Current setpoint: %2.2f C, finishing at approx. %s" % \
+                    print ("Current setpoint: %2.2f C, finishing at approx. %s") % \
                         (current_set,final_str)
                         
             elif current_set <= target_temp and decrease_flag:
@@ -298,27 +300,27 @@ if prog == "2":
                 # True to kill this while loop 
                 current_set = target_temp # set current_set to the final 
                                           # target_temp
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command)
                 response = bath.readline() # read line to clear buffer
                 flag = True # set flag True to kill while loop
-                print "Waiting to reach final temperature"
+                print ("Waiting to reach final temperature")
                 
     # Now hang out and wait for the bath temperature to get close to the final
     # target temperature
     flag = False
     while flag != True:
         time.sleep(1)
-        bath.write("RT\r") # Query current bath temperature
+        bath.write(b"RT\r") # Query current bath temperature
         response = bath.readline()
         response = float(response[0:5])
-        print "Current temperature: %2.2f C" % response
+        print ("Current temperature: %2.2f C" % response)
         if (abs(response - target_temp) < 0.05):
-            print "**************************************************"
-            print "**************************************************"
-            print "Starting hold of peak Temperature"    
-            print "**************************************************"
-            print "**************************************************"
+            print ("**************************************************") 
+            print ("**************************************************")
+            print ("Starting hold of peak Temperature")    
+            print ("**************************************************")
+            print ("**************************************************")
             flag = True
             time.sleep(2)
     
@@ -326,7 +328,7 @@ if prog == "2":
     # At this point the water bath should hold at the peak temp for the 
     #specified amount of time
    
-    print "Peak hold duration will take %1.0f minutes" % hold_time #check OK
+    print ("Peak hold duration will take %1.0f minutes") % hold_time #check OK
     # hold_time was specified by the user in minutes
     
    
@@ -340,13 +342,13 @@ if prog == "2":
         # Compare new_time to prev_time, if new time equals previous time plus
          #the specified hold time (in seconds), then its time to kill the while 
          #loop
-        print "Hold time in seconds: %2.0f" %(hold_time*60)
+        print ("Hold time in seconds: %2.0f") %(hold_time*60)
         if new_time >= (prev_time + (hold_time*60)): 
-            print "**************************************************"
-            print "**************************************************"
-            print "Ramp peak finished"    
-            print "**************************************************"
-            print "**************************************************"
+            print ("**************************************************")
+            print ("**************************************************")
+            print ("Ramp peak finished")    
+            print ("**************************************************")
+            print ("**************************************************")
             flag = True # set flag to True to kill while loop
             # time.sleep(1)
     
@@ -361,7 +363,7 @@ if prog == "2":
     # Calculate the time needed for the ramp (degrees / degrees per hour)
     fall_duration = temp_diff / fall_rate # units hours
     fall_duration_m = fall_duration * 60 # convert to minutes
-    print "Ramp down will take %2.2f hrs (%1.0f minutes)" % \
+    print ("Ramp down will take %2.2f hrs (%1.0f minutes)") % \
         (fall_duration,fall_duration_m)
 
     # Calculate per-minute temperature step (units of degrees C)
@@ -379,11 +381,11 @@ if prog == "2":
         decrease_flag = False # The ramp will be an increasing ramp
             
     prev_time = time.time() # get starting time (in seconds)
-    bath.write("RS\r") # get current setpoint
+    bath.write(b"RS\r") # get current setpoint
     current_set = bath.readline() # always read response to clear buffer
     current_set = float(current_set[0:5])
     current_set = current_set + fall_rate_m # add temp step to current setpoint
-    command = "SS " + "%2.2f\r" % current_set 
+    command = ("SS " + "%2.2f\r" % current_set).encode('utf-8') 
     bath.write(command) # change set point
     response = bath.readline()
     
@@ -397,10 +399,10 @@ if prog == "2":
             prev_time = new_time # update to new time
             current_set = current_set + fall_rate_m # add temp step to setpoint
             if current_set < end_temp and not decrease_flag:
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command) # update water bath setpoint
                 response = bath.readline()
-                # Calculate remaining temperature to cover
+                # Calculate remaining temperature to covert
                 temp_left = end_temp - current_set
                 # Calculate remaining time in minutes
                 time_left = temp_left / fall_rate_m
@@ -413,7 +415,7 @@ if prog == "2":
                     # convert final_time to a human-readable string                
                     final_str = time.strftime("%H:%M", 
                                               time.localtime(final_time))
-                    print "Current setpoint: %2.2f C, finishing at approx. %s" % \
+                    print ("Current setpoint: %2.2f C, finishing at approx. %s") % \
                         (current_set,final_str)
             elif current_set >= end_temp and not decrease_flag:
                 # If the new current_set value is greater than the end_temp, 
@@ -422,15 +424,15 @@ if prog == "2":
                 # this while loop
                 current_set = end_temp # set current_set to the final 
                                           # target_temp
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command)
                 response = bath.readline() # read line to clear buffer
                 flag = True # set flag True to kill while loop
-                print "Waiting to reach ending temperature"
+                print ("Waiting to reach ending temperature")
             elif current_set > end_temp and decrease_flag:
                 # The temperature should be ramped downward when decrease_flag
                 # is True
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command) # update water bath setpoint
                 response = bath.readline()
                 # Calculate remaining temperature to cover
@@ -446,7 +448,7 @@ if prog == "2":
                     # convert final_time to a human-readable string                
                     final_str = time.strftime("%H:%M", 
                                               time.localtime(final_time))
-                    print "Current setpoint: %2.2f C, finishing at approx. %s" % \
+                    print ("Current setpoint: %2.2f C, finishing at approx. %s") % \
                         (current_set,final_str)
                         
             elif current_set <= end_temp and decrease_flag:
@@ -457,36 +459,36 @@ if prog == "2":
                 # True to kill this while loop 
                 current_set = end_temp # set current_set to the final 
                                           # target_temp
-                command = "SS %2.2f\r" % current_set
+                command = ("SS %2.2f\r" % current_set).encode('utf-8')
                 bath.write(command)
                 response = bath.readline() # read line to clear buffer
                 flag = True # set flag True to kill while loop
-                print "Waiting to reach ending temperature"
+                print ("Waiting to reach ending temperature")
                 
     # Now hang out and wait for the bath temperature to get close to the ending
     # temperature
     flag = False
     while flag != True:
         time.sleep(1)
-        bath.write("RT\r") # Query current bath temperature
+        bath.write(b"RT\r") # Query current bath temperature
         response = bath.readline()
         response = float(response[0:5])
-        print "Current temperature: %2.2f C" % response
+        print ("Current temperature: %2.2f C") % response
         if (abs(response - end_temp) < 0.05):
-            print "**************************************************"
-            print "**************************************************"
-            print "Ending temperature reached:]"    
-            print "**************************************************"
-            print "**************************************************"
+            print ("**************************************************")
+            print ("**************************************************")
+            print ("Ending temperature reached:]")    
+            print ("**************************************************")
+            print ("**************************************************")
             flag = True
             time.sleep(2)
     # At this point the water bath should stay at the end_temp setpoint 
     # indefinitely. 
     try: 
         bath.close() # shut down serial connection
-        print "Closed serial connection"
+        print ("Closed serial connection")
         time.sleep(5)
     except: 
-        print "Serial connection failed to close"                  
+        print ("Serial connection failed to close")                  
         time.sleep(5)
 

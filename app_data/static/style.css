@@ -1,0 +1,202 @@
+
+@import url('https://fonts.googleapis.com/css?family=Raleway&display=swap');
+@import url('https://fonts.googleapis.com/css?family=Rubik&display=swap');
+
+*{
+    margin: 0%;
+    padding: 0%;
+    font-family: 'Rubik', sans-serif;
+    user-select:none;
+}
+
+
+body{
+    margin: 0%;
+    padding: 0%;
+    background-color: #363636;
+}
+#container{
+    width: 100vw;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+
+#cellphone{
+    width: 300px;
+    height: 580px;
+    border-radius: 15px;
+    background-color: #202020;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    overflow: hidden;
+    padding-top: 0.5%;
+    padding-bottom: 0.5%;
+}
+
+#sound{
+    width: 150px;
+    height: 30px;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: #202020;
+    border-radius: 0px 0px 15px 15px ;
+}
+
+#screen{
+    width: 98%;
+    height: 100%;
+    margin: 1.5%;
+    border-radius: 15px;
+    background-color: #8a05be;
+    overflow: hidden;
+}
+
+#statusbar{
+    width: 100%;
+    height: 25px;
+    background-image: url(https://i.imgur.com/EubDZ9z.png);
+    background-position: center;
+    background-size: cover;
+}
+
+#logoCusuario{
+    width: 100%;
+    height: 50px;
+    margin-top: 20%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+img{margin: 5%;}
+p{font-weight: bold; color: white;}
+
+#seta{
+    width: 100%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+#seta i{
+    transform: rotate(-90deg);
+    color: white;
+}
+
+#boxCash{
+    width: 250px;
+    height: 250px;
+    background-color: white;
+    margin-right: auto;
+    margin-left: auto;
+    border-radius: 5px;
+    overflow: hidden;
+}
+
+#boxCash i{
+    margin: 5%;
+    color: #0000005e;
+}
+
+#graph{
+    float: left;
+    width: 100%;
+    padding: 15px;
+}
+#graph div{
+    float: left;
+    margin: 1%;
+    width: 3px;
+    height: 30px;
+    border-radius: 15px;
+    background-color: #cfcfcf;
+}
+.purple{
+    background-color: purple !important;
+    color: purple !important;
+}
+#cash{
+    padding: 15px;
+    height: 30px;
+}
+#cash p{
+    float: left;
+    color: black !important;
+    padding: 2px;
+    font-size: 25px;
+}
+#cash p:nth-child(2n){
+    width: 100%;
+    font-size: 11px;
+    margin-bottom: 11%;
+}
+#cash p b{
+    color: #7bc40d;
+}
+#boxCash i:nth-child(2n){
+    float: right;
+    margin: 1.5%;
+}
+
+#footerBoxCash{
+    width: 100%;
+    height: 60px;
+    background-color: #eeeeee;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+#footerBoxCash i{
+    margin: 0%;
+    margin-right: 5%;
+    margin-left: 5%;
+    font-size: 20px;
+}
+#footerBoxCash p{
+    color: #0000005e !important;
+    font-size: 11px;
+}
+
+#bolinhas{
+    width: 100%;
+    height: auto;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+}
+#bolinhas span{
+    width: 5px;
+    height: 5px;
+    border-radius: 50%;
+    background-color: white;
+    margin: 1%;
+}
+
+#sliderBox{
+    width: 1000%;
+    height: 85px;
+    padding: 20px;
+}
+.box{
+    float: left;
+    margin: 4px;
+    width: 70px;
+    height: 70px;
+    background-color: #b03cdf;
+    border-radius: 5px;
+}
+.box i{
+    margin: 10%;
+    margin-bottom: 0%;
+    font-size: 20px;
+    color: white;
+}
+.box p{
+    font-size: 12px;
+    font-family: raleway;
+    padding-left: 10%;
+}

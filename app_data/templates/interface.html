@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" type="text/css" href="../static/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>hello world</title>
+    
+
+        <!-- Materialize -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    
+</head>
+<body>
+
+    <div id="container">
+        <div id="cellphone">
+            <div id="screen">
+
+                <div id="statusbar"></div>
+                <div id="logoCusuario">
+                    <img src="https://i.imgur.com/7w1fLWl.png" alt="" width="50px">
+                    <p id="nomeUsuario">Thermobath Interface</p>
+                </div>
+                <div id="seta">
+                    <i class="material-icons">chevron_left</i>
+                </div>
+                <!-- info cash -->
+                <div id="boxCash">
+                    <form method="post">
+                        <label for="routine">Choose a routine:</label>
+                        <select name="routine" id="routine">
+                            <option value="0">Set to constant temperature</option>
+                            <option value="1">Set to starting temperature and start ramp</option>
+                            <option value="2">Start ramp immediately from current temperature</option>
+                        </select>
+                        <br><br>
+                        <label for="set_temp">Setpoint Temperature (F):</label>
+                        <input type="text" name="set_temp" required><br><br>
+                        <button type="submit">Run Script</button>
+                    </form>
+                    {% if output %}
+                    <h2>Script Output:</h2>
+                    <pre>{{ output }}</pre>
+                    {% endif %}
+
+                    <div id="graph">
+                    </div>
+                    <div id="cash">
+
+                        <p>R$ 1.856,78</p>
+                         <i class="material-icons">remove_red_eye</i>
+                         <br>
+                         <p>Você já ganhou <b>R$ 1,38</b> esse mês</p>
+                    </div>
+                    <div id="footerBoxCash">
+                        <i class="material-icons">info_outline</i>
+                        <p>
+                        Transferência de R$ 80,00 
+                        <br> 
+                        enviada para Flinston ontem
+                        </p>
+                        <i class="material-icons">chevron_right</i>
+                    </div>
+                </div>
+                <!-- fim info cash -->
+                <div id="bolinhas">
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                    <span>&nbsp;</span>
+                </div>
+                    </div>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</body>
+</html>
